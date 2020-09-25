@@ -66,7 +66,7 @@ const headCells = [
         label: "Single Player",
     },
     {
-        id: "multiPlayer",
+        id: "multiplayer",
         numeric: true,
         disablePadding: false,
         label: "Multi Player",
@@ -80,10 +80,10 @@ const headCells = [
     },
     { id: "release", numeric: true, disablePadding: false, label: "Release" },
     {
-        id: "img",
+        id: "image_url",
         numeric: true,
         disablePadding: false,
-        label: "Img",
+        label: "Image_url",
     },
     {
         id: "Edit",
@@ -166,13 +166,13 @@ const useToolbarStyles = makeStyles((theme) => ({
     highlight:
         theme.palette.type === "light"
             ? {
-                  color: theme.palette.secondary.main,
-                  backgroundColor: lighten(theme.palette.secondary.light, 0.85),
-              }
+                color: theme.palette.secondary.main,
+                backgroundColor: lighten(theme.palette.secondary.light, 0.85),
+            }
             : {
-                  color: theme.palette.text.primary,
-                  backgroundColor: theme.palette.secondary.dark,
-              },
+                color: theme.palette.text.primary,
+                backgroundColor: theme.palette.secondary.dark,
+            },
     title: {
         flex: "1 1 100%",
     },
@@ -198,15 +198,15 @@ const EnhancedTableToolbar = (props) => {
                         {numSelected} selected
                     </Typography>
                 ) : (
-                    <Typography
-                        className={classes.name}
-                        variant="h6"
-                        id="tableTitle"
-                        component="div"
-                    >
-                        List Game
-                    </Typography>
-                )}
+                        <Typography
+                            className={classes.name}
+                            variant="h6"
+                            id="tableTitle"
+                            component="div"
+                        >
+                            List Game
+                        </Typography>
+                    )}
 
                 {numSelected > 0 ? (
                     <Tooltip title="Delete">
@@ -218,12 +218,12 @@ const EnhancedTableToolbar = (props) => {
                         </IconButton>
                     </Tooltip>
                 ) : (
-                    <Tooltip title="Filter list">
-                        <IconButton aria-label="filter list">
-                            {/* <FilterListIcon /> */}
-                        </IconButton>
-                    </Tooltip>
-                )}
+                        <Tooltip title="Filter list">
+                            <IconButton aria-label="filter list">
+                                {/* <FilterListIcon /> */}
+                            </IconButton>
+                        </Tooltip>
+                    )}
             </Toolbar>
         );
     } else if (props.tipe === "form") {
@@ -243,27 +243,27 @@ const EnhancedTableToolbar = (props) => {
                         {numSelected} Form - Update
                     </Typography>
                 ) : (
-                    <Typography
-                        className={classes.name}
-                        variant="h6"
-                        id="tableTitle"
-                        component="div"
-                    >
-                        Form - Add
-                    </Typography>
-                )}
+                        <Typography
+                            className={classes.name}
+                            variant="h6"
+                            id="tableTitle"
+                            component="div"
+                        >
+                            Form - Add
+                        </Typography>
+                    )}
 
                 {numSelected > 0 ? (
                     <Tooltip title="Delete">
                         <IconButton></IconButton>
                     </Tooltip>
                 ) : (
-                    <Tooltip title="Filter list">
-                        <IconButton aria-label="filter list">
-                            <FilterListIcon />
-                        </IconButton>
-                    </Tooltip>
-                )}
+                        <Tooltip title="Filter list">
+                            <IconButton aria-label="filter list">
+                                <FilterListIcon />
+                            </IconButton>
+                        </Tooltip>
+                    )}
             </Toolbar>
         );
     }
@@ -326,11 +326,11 @@ export default function EnhancedTable() {
     const [input, setInput] = React.useState({
         name: "",
         singlePlayer: "",
-        multiPlayer: "",
+        multiplayer: "",
         genre: "",
         platform: "",
         release: "",
-        img: "",
+        image_url: "",
     });
     const [open, setOpen] = React.useState(false);
 
@@ -342,12 +342,13 @@ export default function EnhancedTable() {
         setOpen(false);
     };
     const loadList = () => {
-        Axios.get("https://fajrika-a39f.restdb.io/rest/games", {
+
+        Axios.get("https://backendexample.sanbersy.com/api/data-game", {
             baseURL: "",
             headers: {
+                Authorization: "Bearer " + JSON.parse(localStorage.getItem("dataUser")).token,
                 "Content-Type": "application/json",
-                "x-apikey": "5f39419568a7ed76e035d33d",
-            },
+            }
         }).then((res) => {
             setRows(res.data);
         });
@@ -393,11 +394,11 @@ export default function EnhancedTable() {
             setInput({
                 name: "",
                 singlePlayer: "",
-                multiPlayer: "",
+                multiplayer: "",
                 genre: "",
                 platform: "",
                 release: "",
-                img: "",
+                image_url: "",
             });
         } else {
             rows.forEach((el) => {
@@ -423,11 +424,11 @@ export default function EnhancedTable() {
             rows.forEach((el2) => {
                 if (el2.id === el1) {
                     Axios.delete(
-                        `https://fajrika-a39f.restdb.io/rest/games/${el2._id}`,
+                        `https://backendexample.sanbersy.com/api/data-game/${el2.id}`,
                         {
                             headers: {
                                 "Content-Type": "application/json",
-                                "x-apikey": "5f39419568a7ed76e035d33d",
+                                Authorization: "Bearer " + JSON.parse(localStorage.getItem("dataUser")).token
                             },
                         }
                     ).then((res) => {
@@ -445,16 +446,6 @@ export default function EnhancedTable() {
     const emptyRows =
         rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
 
-    // const getBase64 = (file, cb) => {
-    //     let reader = new FileReader();
-    //     reader.readAsDataURL(file);
-    //     reader.onload = function () {
-    //         cb(reader.result);
-    //     };
-    //     reader.onerror = function (error) {
-    //         console.log("Error: ", error);
-    //     };
-    // };
     const handleChange = (e) => {
         const { name, value } = e.target;
         setInput((prevState) => ({
@@ -462,18 +453,7 @@ export default function EnhancedTable() {
             [name]: value,
         }));
     };
-    // const handleChangeIMG = (e) => {
-    //     let tmp = "";
-    //     getBase64(document.getElementById("prototype").files[0], (result) => {
-    //         tmp = result;
-    //         console.log(tmp);
-    //         setInput((prevState) => ({
-    //             ...prevState,
-    //             img: tmp,
-    //         }));
-    //         console.log(input);
-    //     });
-    // };
+
     const handleSubmit = (e) => {
         console.log(input);
         // return 0;
@@ -496,12 +476,12 @@ export default function EnhancedTable() {
 
             if (selected.length === 0) {
                 Axios.post(
-                    "https://fajrika-a39f.restdb.io/rest/games",
+                    "https://backendexample.sanbersy.com/api/data-game",
                     { ...input, created_at: dNow, updated_at: dNow },
                     {
                         headers: {
                             "Content-Type": "application/json",
-                            "x-apikey": "5f39419568a7ed76e035d33d",
+                            Authorization: "Bearer " + JSON.parse(localStorage.getItem("dataUser")).token
                         },
                     }
                 ).then((res) => {
@@ -512,17 +492,20 @@ export default function EnhancedTable() {
                 let tmp = 0;
                 rows.forEach((el) => {
                     if (el.id === selected[selected.length - 1]) {
-                        tmp = el._id;
+                        tmp = el.id;
                         return 0;
                     }
                 });
                 Axios.put(
-                    `https://fajrika-a39f.restdb.io/rest/games/${tmp}`,
-                    { ...input, updated_at: dNow },
+                    `https://backendexample.sanbersy.com/api/data-game/${tmp}`,
+                    {
+                        ...input,
+                        updated_at: dNow
+                    },
                     {
                         headers: {
                             "Content-Type": "application/json",
-                            "x-apikey": "5f39419568a7ed76e035d33d",
+                            Authorization: "Bearer " + JSON.parse(localStorage.getItem("dataUser")).token
                         },
                     }
                 ).then((res) => {
@@ -535,11 +518,11 @@ export default function EnhancedTable() {
         setInput({
             name: "",
             singlePlayer: "",
-            multiPlayer: "",
+            multiplayer: "",
             genre: "",
             platform: "",
             release: "",
-            img: "",
+            image_url: "",
         });
     };
     return (
@@ -620,15 +603,13 @@ export default function EnhancedTable() {
                                                 align="right"
                                                 className="td-singlePlayer"
                                             >
-                                                {row.singlePlayer
-                                                    ? "Yes"
-                                                    : "No"}
+                                                {row.singlePlayer === 1 ? "Yes" : "No"}
                                             </TableCell>
                                             <TableCell
                                                 align="right"
-                                                className="td-multiPlayer"
+                                                className="td-multiplayer"
                                             >
-                                                {row.multiPlayer ? "Yes" : "No"}
+                                                {row.multiplayer === 1 ? "Yes" : "No"}
                                             </TableCell>
                                             <TableCell
                                                 align="right"
@@ -650,9 +631,9 @@ export default function EnhancedTable() {
                                             </TableCell>
                                             <TableCell
                                                 align="right"
-                                                className="td-img"
+                                                className="td-image_url"
                                             >
-                                                {row.img}
+                                                {row.image_url}
                                             </TableCell>
                                             <TableCell align="right">
                                                 <Button
@@ -735,22 +716,22 @@ export default function EnhancedTable() {
                                 onChange={handleChange}
                                 select
                             >
-                                <MenuItem value={true}>Yes</MenuItem>
-                                <MenuItem value={false}>No</MenuItem>
+                                <MenuItem value={1}>Yes</MenuItem>
+                                <MenuItem value={0}>No</MenuItem>
                             </TextField>
                             <TextField
                                 className={classes.select}
-                                id="inp-multiPlayer"
+                                id="inp-multiplayer"
                                 label="Multi Player"
                                 // defaultValue="Default Value"
                                 helperText="Required"
-                                name="multiPlayer"
-                                value={input.multiPlayer}
+                                name="multiplayer"
+                                value={input.multiplayer}
                                 onChange={handleChange}
                                 select
                             >
-                                <MenuItem value={true}>Yes</MenuItem>
-                                <MenuItem value={false}>No</MenuItem>
+                                <MenuItem value={1}>Yes</MenuItem>
+                                <MenuItem value={0}>No</MenuItem>
                             </TextField>
                             <TextField
                                 className={classes.form}
@@ -785,12 +766,12 @@ export default function EnhancedTable() {
 
                             <TextField
                                 className={classes.form}
-                                id="inp-img"
-                                label="Img"
+                                id="inp-image_url"
+                                label="Image_url"
                                 // defaultValue="Default Value"
                                 helperText="Required"
-                                name="img"
-                                value={input.img}
+                                name="image_url"
+                                value={input.image_url}
                                 onChange={handleChange}
                             />
                             <Grid item xs={12} sm={12} md={12} lg={12}>
@@ -804,7 +785,7 @@ export default function EnhancedTable() {
                                         id="prototype"
                                         type="file"
                                         style={{ display: "none" }}
-                                        name="img"
+                                        name="image_url"
                                         onChange={handleChangeIMG}
                                     />
                                 </Button> */}

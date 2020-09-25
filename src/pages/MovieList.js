@@ -68,7 +68,7 @@ const headCells = [
         disablePadding: false,
         label: "Duration",
     },
-    { id: "img", numeric: true, disablePadding: false, label: "Img" },
+    { id: "image_url", numeric: true, disablePadding: false, label: "Image_url" },
     { id: "review", numeric: true, disablePadding: false, label: "Review" },
     {
         id: "description",
@@ -157,13 +157,13 @@ const useToolbarStyles = makeStyles((theme) => ({
     highlight:
         theme.palette.type === "light"
             ? {
-                  color: theme.palette.secondary.main,
-                  backgroundColor: lighten(theme.palette.secondary.light, 0.85),
-              }
+                color: theme.palette.secondary.main,
+                backgroundColor: lighten(theme.palette.secondary.light, 0.85),
+            }
             : {
-                  color: theme.palette.text.primary,
-                  backgroundColor: theme.palette.secondary.dark,
-              },
+                color: theme.palette.text.primary,
+                backgroundColor: theme.palette.secondary.dark,
+            },
     title: {
         flex: "1 1 100%",
     },
@@ -189,15 +189,15 @@ const EnhancedTableToolbar = (props) => {
                         {numSelected} selected
                     </Typography>
                 ) : (
-                    <Typography
-                        className={classes.title}
-                        variant="h6"
-                        id="tableTitle"
-                        component="div"
-                    >
-                        List
-                    </Typography>
-                )}
+                        <Typography
+                            className={classes.title}
+                            variant="h6"
+                            id="tableTitle"
+                            component="div"
+                        >
+                            List Movie
+                        </Typography>
+                    )}
 
                 {numSelected > 0 ? (
                     <Tooltip title="Delete">
@@ -209,12 +209,12 @@ const EnhancedTableToolbar = (props) => {
                         </IconButton>
                     </Tooltip>
                 ) : (
-                    <Tooltip title="Filter list">
-                        <IconButton aria-label="filter list">
-                            {/* <FilterListIcon /> */}
-                        </IconButton>
-                    </Tooltip>
-                )}
+                        <Tooltip title="Filter list">
+                            <IconButton aria-label="filter list">
+                                {/* <FilterListIcon /> */}
+                            </IconButton>
+                        </Tooltip>
+                    )}
             </Toolbar>
         );
     } else if (props.tipe === "form") {
@@ -234,28 +234,28 @@ const EnhancedTableToolbar = (props) => {
                         {numSelected} Form - Update
                     </Typography>
                 ) : (
-                    <Typography
-                        className={classes.title}
-                        variant="h6"
-                        id="tableTitle"
-                        component="div"
-                        
-                    >
-                        Form - Add
-                    </Typography>
-                )}
+                        <Typography
+                            className={classes.title}
+                            variant="h6"
+                            id="tableTitle"
+                            component="div"
+
+                        >
+                            Form - Add
+                        </Typography>
+                    )}
 
                 {numSelected > 0 ? (
                     <Tooltip title="Delete">
                         <IconButton></IconButton>
                     </Tooltip>
                 ) : (
-                    <Tooltip title="Filter list">
-                        <IconButton aria-label="filter list">
-                            <FilterListIcon />
-                        </IconButton>
-                    </Tooltip>
-                )}
+                        <Tooltip title="Filter list">
+                            <IconButton aria-label="filter list">
+                                <FilterListIcon />
+                            </IconButton>
+                        </Tooltip>
+                    )}
             </Toolbar>
         );
     }
@@ -315,7 +315,7 @@ export default function EnhancedTable() {
         rating: "",
         year: "",
         genre: "",
-        img: "",
+        image_url: "",
         duration: "",
         review: "",
         description: "",
@@ -334,11 +334,11 @@ export default function EnhancedTable() {
         console.log(input);
     }, [input]);
     const loadList = () => {
-        Axios.get("https://fajrika-a39f.restdb.io/rest/Movies", {
+        Axios.get("https://backendexample.sanbersy.com/api/data-movie", {
             baseURL: "",
             headers: {
                 "Content-Type": "application/json",
-                "x-apikey": "5f39419568a7ed76e035d33d",
+                Authorization: "Bearer " + JSON.parse(localStorage.getItem("dataUser")).token
             },
         }).then((res) => {
             setRows(res.data);
@@ -387,7 +387,7 @@ export default function EnhancedTable() {
                 rating: "",
                 year: "",
                 genre: "",
-                img: "",
+                image_url: "",
                 duration: "",
                 review: "",
                 description: "",
@@ -419,11 +419,11 @@ export default function EnhancedTable() {
             rows.forEach((el2) => {
                 if (el2.id === el1) {
                     Axios.delete(
-                        `https://fajrika-a39f.restdb.io/rest/movies/${el2._id}`,
+                        `https://backendexample.sanbersy.com/api/data-movie/${el2.id}`,
                         {
                             headers: {
                                 "Content-Type": "application/json",
-                                "x-apikey": "5f39419568a7ed76e035d33d",
+                                Authorization: "Bearer " + JSON.parse(localStorage.getItem("dataUser")).token
                             },
                         }
                     ).then((res) => {
@@ -467,12 +467,12 @@ export default function EnhancedTable() {
             if (selected.length === 0) {
                 console.log(e.target.name);
                 Axios.post(
-                    "https://fajrika-a39f.restdb.io/rest/movies",
+                    "https://backendexample.sanbersy.com/api/data-movie",
                     { ...input, created_at: dNow, updated_at: dNow },
                     {
                         headers: {
                             "Content-Type": "application/json",
-                            "x-apikey": "5f39419568a7ed76e035d33d",
+                            Authorization: "Bearer " + JSON.parse(localStorage.getItem("dataUser")).token
                         },
                     }
                 ).then((res) => {
@@ -484,17 +484,17 @@ export default function EnhancedTable() {
                 let tmp = 0;
                 rows.forEach((el) => {
                     if (el.id === selected[selected.length - 1]) {
-                        tmp = el._id;
+                        tmp = el.id;
                         return 0;
                     }
                 });
                 Axios.put(
-                    `https://fajrika-a39f.restdb.io/rest/movies/${tmp}`,
+                    `https://backendexample.sanbersy.com/api/data-movie/${tmp}`,
                     { ...input, updated_at: dNow },
                     {
                         headers: {
                             "Content-Type": "application/json",
-                            "x-apikey": "5f39419568a7ed76e035d33d",
+                            Authorization: "Bearer " + JSON.parse(localStorage.getItem("dataUser")).token
                         },
                     }
                 ).then((res) => {
@@ -508,7 +508,7 @@ export default function EnhancedTable() {
             rating: "",
             year: "",
             genre: "",
-            img: "",
+            image_url: "",
             duration: "",
             review: "",
             description: "",
@@ -614,9 +614,9 @@ export default function EnhancedTable() {
                                             </TableCell>
                                             <TableCell
                                                 align="right"
-                                                className="td-img"
+                                                className="td-image_url"
                                             >
-                                                {row.img}
+                                                {row.image_url}
                                             </TableCell>
                                             <TableCell
                                                 align="right"
@@ -742,12 +742,12 @@ export default function EnhancedTable() {
                             />
                             <TextField
                                 className={classes.form}
-                                id="inp-img"
-                                label="Img"
+                                id="inp-image_url"
+                                label="Image_url"
                                 // defaultValue="Default Value"
                                 helperText="Required"
-                                name="img"
-                                value={input.img}
+                                name="image_url"
+                                value={input.image_url}
                                 onChange={handleChange}
                             />
                             <TextField

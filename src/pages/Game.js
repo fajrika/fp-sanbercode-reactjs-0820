@@ -69,6 +69,7 @@ const styles = (theme) => ({
 const Game = (props) => {
     const { classes } = props;
     const [game, setGame] = useState([]);
+    const [game2, setGame2] = useState([]);
     const [openReview, setOpenReview] = useState(false);
     const [modalStyle] = React.useState(getModalStyle);
     const [headerModalReview] = useState("");
@@ -80,61 +81,30 @@ const Game = (props) => {
 
     useEffect(() => {
         Axios.get(
-            // "https://fajrika-a39f.restdb.io/rest/games",
             "https://backendexample.sanbersy.com/api/data-game",
             {
                 baseURL: "",
                 headers: {
                     "Content-Type": "application/json",
-                    "x-apikey": "5f39419568a7ed76e035d33d",
-                    // "cache-control": "no-cache",
-                    // "Access-Control-Allow-Origin": "*",
-                    // "Access-Control-Request-Headers": "*",
                 },
             }
         ).then((res) => {
+            setGame2(res.data);
             setGame(res.data);
         });
     }, []);
 
-    //const handleSearch = (event) => {
-    //const value = event.target.value;
-    //setInput(value);
-    //const filterData = game.filter((el) => {
-    //return el.name.toLowerCase().includes(value.toLowerCase());
-    //});
-    //setGame(filterData);
-    //};
-    let cancelToken;
     const handleSearch = async (e) => {
-        const searchTerm = e.target.value;
-        // setInput(searchTerm);
-        //Check if there are any previous pending requests
-        if (typeof cancelToken != typeof undefined) {
-            cancelToken.cancel("Operation canceled due to new request.");
-        }
-        //Save the cancel token for the current request
-        cancelToken = Axios.CancelToken.source();
+        const searchTerm = e.target.value.toLowerCase();
         try {
-            let url = "";
-            if (searchTerm === "") {
-                url = `https://fajrika-a39f.restdb.io/rest/games`;
-            } else {
-                url = `https://fajrika-a39f.restdb.io/rest/games?q={"name":{"$regex":"${searchTerm}"}}`;
-            }
-            const results = await Axios.get(
-                url,
-                {
-                    cancelToken: cancelToken.token,
-                    headers: {
-                        "Content-Type": "application/json",
-                        "x-apikey": "5f39419568a7ed76e035d33d",
-                    },
-                } //Pass the cancel token to the current request
-            ).then((res) => {
-                setGame(res.data);
+            let tmpGame = [];
+            game.forEach(el => {
+                if (el.name.toLowerCase().includes(searchTerm))
+                    tmpGame.push(el);
             });
-            console.log("Results for " + searchTerm + ": ", results.data);
+            setGame2(tmpGame);
+            console.log("Results for " + searchTerm);
+
         } catch (error) {
             console.log(error);
         }
@@ -172,12 +142,12 @@ const Game = (props) => {
                         />
                     </Paper>
                     <div>
-                        {game !== [] &&
-                            game
+                        {game2 !== [] &&
+                            game2
                                 .map((el) => {
                                     return (
                                         <Button
-                                            key={el.id}
+                                            key={1 + el.id}
                                             variant="outlined"
                                             size="large"
                                             className={classes.button}
@@ -192,9 +162,9 @@ const Game = (props) => {
                 </Grid>
             </Grid>
             <Grid container spacing={3}>
-                {game.map((el, index) => {
+                {game2.map((el, index) => {
                     return (
-                        <Grid item xs={10} sm={6} md={3} key={el._id}>
+                        <Grid item xs={10} sm={6} md={3} key={2 + el.id}>
                             <Paper className={classes.paper}>
                                 <Card className={classes.root}>
                                     <CardHeader
@@ -208,7 +178,7 @@ const Game = (props) => {
                                     {/* <StarIcon /> */}
                                     <CardMedia
                                         className={classes.media}
-                                        image={el.img}
+                                        image={el.image_url}
                                         title={el.name}
                                     />
                                     <CardContent>
@@ -231,11 +201,9 @@ const Game = (props) => {
                                             color="textSecondary"
                                             component="p"
                                         >
-                                            Multi Player :{" "}
-                                            {el.multiPlayer ? "Yes" : "No"}{" "}
-                                            <br></br>
-                                            Single Player :{" "}
-                                            {el.singlePlayer ? "Yes" : "No"}
+                                            Multi Player : {el.multiplayer === 1 ? "Yes" : "No"}
+                                            <br />
+                                            Single Player : {el.singlePlayer === 1 ? "Yes" : "No"}
                                         </Typography>
                                     </CardContent>
                                 </Card>
@@ -244,31 +212,6 @@ const Game = (props) => {
                     );
                 })}
             </Grid>
-
-            {/* <Button
-                variant="contained"
-                color="primary"
-                aria-label="add"
-                className={classes.button}
-            >
-                <AddIcon />
-            </Button>
-            <Button
-                variant="contained"
-                color="secondary"
-                aria-label="edit"
-                className={classes.button}
-            >
-                <AddIcon />
-            </Button>
-            <Button
-                variant="contained"
-                disabled
-                aria-label="delete"
-                className={classes.button}
-            >
-                <DeleteIcon />
-            </Button> */}
         </div>
     );
 };
