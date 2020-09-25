@@ -42,7 +42,8 @@ const Register = (props) => {
   const history = useHistory();
 
   const [input, setInput] = useState({
-    username: "",
+    name: "",
+    email: "",
     password: "",
     showPassword: false,
   });
@@ -60,8 +61,9 @@ const Register = (props) => {
   };
 
   const handleClick = () => {
-    Axios.post("https://backendexample.sanbersy.com/api/users", {
-      username: input.username,
+    Axios.post("https://backendexample.sanbersy.com/api/register", {
+      name: input.name,
+      email: input.email,
       password: input.password,
     })
       .then((response) => {
@@ -80,11 +82,20 @@ const Register = (props) => {
         <Grid item xs sm md lg className={classes.formContainer}>
           <TextField
             id="outlined-basic"
-            label="Username"
-            name="username"
+            label="Name"
+            name="name"
             variant="outlined"
             className={classes.margin}
-            value={input.username}
+            value={input.name}
+            onChange={handleChange}
+          />
+          <TextField
+            id="outlined-basic"
+            label="email"
+            name="email"
+            variant="outlined"
+            className={classes.margin}
+            value={input.email}
             onChange={handleChange}
           />
           <FormControl variant="outlined" className={classes.margin}>

@@ -150,7 +150,7 @@ export default function Appbar() {
   const dataStorageUser = JSON.parse(localStorage.getItem("dataUser"));
 
   const handleLogout = () => {
-    setDataUser({ ...dataUser, username: "", password: "" });
+    setDataUser({ ...dataUser, name: "", email: "", token: "" });
     setIsLoggedIn(false);
     localStorage.clear();
   };

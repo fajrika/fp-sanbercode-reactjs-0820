@@ -4,8 +4,9 @@ export const LoginContext = createContext();
 
 export const LoginProvider = (props) => {
   const [dataUser, setDataUser] = useState({
-    username: "",
-    password: "",
+    name: "",
+    email: "",
+    token: ""
   });
 
   const [isLoggedIn, setIsLoggedIn] = useState(false);
